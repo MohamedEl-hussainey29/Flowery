@@ -21,7 +21,11 @@ pipeline {
     ]
 
     stages {
-        stage('1. Checkout') { steps { checkout scm } }
+        stage('1. Checkout') { 
+            steps { 
+                checkout scm 
+            } 
+        }
 
         stage('2. Inject Secrets') {
             steps {
@@ -65,6 +69,8 @@ pipeline {
     }
     
     post {
-        always { sh 'docker image prune -f' }
+        always { 
+            sh 'docker image prune -f' 
+        }
     }
 }
