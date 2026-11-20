@@ -1,0 +1,104 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: address-cart-deployment
+  namespace: flowery
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: address-cart
+  template:
+    metadata:
+      labels:
+        component: address-cart
+    spec:
+      containers:
+        - name: address-cart
+          image: mowalid29/flowery-address-cart
+          ports:
+            - containerPort: 8080
+          env:
+            - name: ASPNETCORE_ENVIRONMENT
+              valueFrom:
+                configMapKeyRef:
+                  name: flowery-config
+                  key: ASPNETCORE_ENVIRONMENT
+
+            - name: MSSQL_SA_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: flowery-secrets
+                  key: MSSQL_SA_PASSWORD
+            - name: ConnectionStrings__AddressCartDatabase
+              value: "Server=sqlserver-cluster-ip-service;Database=FloweAppAddressCartDb;User Id=sa;Password=$(MSSQL_SA_PASSWORD);TrustServerCertificate=True"
+
+            - name: Redis__ConnectionString
+              valueFrom:
+                configMapKeyRef:
+                  name: flowery-config
+                  key: Redis__ConnectionString
+
+            - name: RabbitMq__Host
+              valueFrom:
+                configMapKeyRef:
+                  name: flowery-config
+                  key: RabbitMq__Host
+            - name: RabbitMq__Username
+              valueFrom:
+                secretKeyRef:
+                  name: flowery-secrets
+                  key: RabbitMq__Username
+            - name: RabbitMq__Password
+              valueFrom:
+                secretKeyRef:
+                  name: flowery-secrets
+                  key: RabbitMq__Password
+
+            - name: Jwt__SecretKey
+              valueFrom:
+                secretKeyRef:
+                  name: flowery-secrets
+                  key: Jwt__SecretKey
+            - name: Jwt__Issuer
+              valueFrom:
+                configMapKeyRef:
+                  name: flowery-config
+                  key: Jwt__Issuer
+            - name: Jwt__Audience
+              valueFrom:
+                configMapKeyRef:
+                  name: flowery-config
+                  key: Jwt__Audience
+            - name: Jwt__AccessTokenExpiryMinutes
+              valueFrom:
+                configMapKeyRef:
+                  name: flowery-config
+                  key: Jwt__AccessTokenExpiryMinutes
+            - name: Jwt__RefreshTokenExpiryDays
+              valueFrom:
+                configMapKeyRef:
+                  name: flowery-config
+                  key: Jwt__RefreshTokenExpiryDays
+
+            - name: CatalogService__BaseUrl
+              valueFrom:
+                configMapKeyRef:
+                  name: flowery-config
+                  key: CatalogService__BaseUrl
+                  
+            - name: Geocoding__ApiKey
+              valueFrom:
+                secretKeyRef:
+                  name: flowery-secrets
+                  key: Geocoding__ApiKey
+            - name: Geocoding__BaseUrl
+              valueFrom:
+                configMapKeyRef:
+                  name: flowery-config
+                  key: Geocoding__BaseUrl
+            - name: Geocoding__UseMockProvider
+              valueFrom:
+                configMapKeyRef:
+                  name: flowery-config
+                  key: Geocoding__UseMockProvider

@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: address-cart-cluster-ip-service
+  namespace: flowery
+spec:
+  type: ClusterIP
+  selector:
+    component: address-cart
+  ports:
+    - port: 8080 #pod
+      targetPort: 8080 #container inside pod

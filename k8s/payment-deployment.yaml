@@ -1,0 +1,97 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: payment-deployment
+  namespace: flowery
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: payment
+  template:
+    metadata:
+      labels:
+        component: payment
+    spec:
+      containers:
+        - name: payment
+          image: mowalid29/flowery-payment
+          ports:
+            - containerPort: 8080
+          env:
+            - name: ASPNETCORE_ENVIRONMENT
+              valueFrom:
+                configMapKeyRef:
+                  name: flowery-config
+                  key: ASPNETCORE_ENVIRONMENT
+
+            - name: MSSQL_SA_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: flowery-secrets
+                  key: MSSQL_SA_PASSWORD
+            - name: ConnectionStrings__PaymentDatabase
+              value: "Server=sqlserver-cluster-ip-service;Database=FloweAppPaymentDb;User Id=sa;Password=$(MSSQL_SA_PASSWORD);TrustServerCertificate=True"
+
+            - name: Stripe__SecretKey
+              valueFrom:
+                secretKeyRef:
+                  name: flowery-secrets
+                  key: Stripe__SecretKey
+            - name: Stripe__WebhookSecret
+              valueFrom:
+                secretKeyRef:
+                  name: flowery-secrets
+                  key: Stripe__WebhookSecret
+            - name: Stripe__SuccessUrl
+              valueFrom:
+                configMapKeyRef:
+                  name: flowery-config
+                  key: Stripe__SuccessUrl
+            - name: Stripe__CancelUrl
+              valueFrom:
+                configMapKeyRef:
+                  name: flowery-config
+                  key: Stripe__CancelUrl
+
+            - name: RabbitMq__Host
+              valueFrom:
+                configMapKeyRef:
+                  name: flowery-config
+                  key: RabbitMq__Host
+            - name: RabbitMq__Username
+              valueFrom:
+                secretKeyRef:
+                  name: flowery-secrets
+                  key: RabbitMq__Username
+            - name: RabbitMq__Password
+              valueFrom:
+                secretKeyRef:
+                  name: flowery-secrets
+                  key: RabbitMq__Password
+
+            - name: Jwt__SecretKey
+              valueFrom:
+                secretKeyRef:
+                  name: flowery-secrets
+                  key: Jwt__SecretKey
+            - name: Jwt__Issuer
+              valueFrom:
+                configMapKeyRef:
+                  name: flowery-config
+                  key: Jwt__Issuer
+            - name: Jwt__Audience
+              valueFrom:
+                configMapKeyRef:
+                  name: flowery-config
+                  key: Jwt__Audience
+            - name: Jwt__AccessTokenExpiryMinutes
+              valueFrom:
+                configMapKeyRef:
+                  name: flowery-config
+                  key: Jwt__AccessTokenExpiryMinutes
+            - name: Jwt__RefreshTokenExpiryDays
+              valueFrom:
+                configMapKeyRef:
+                  name: flowery-config
+                  key: Jwt__RefreshTokenExpiryDays

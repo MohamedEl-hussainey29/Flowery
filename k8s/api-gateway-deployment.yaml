@@ -1,0 +1,105 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api-gateway-deployment
+  namespace: flowery
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: api-gateway
+  template:
+    metadata:
+      labels:
+        component: api-gateway
+    spec:
+      containers:
+        - name: api-gateway
+          image: mowalid29/flowery-api-gateway
+          ports:
+            - containerPort: 8080
+          env:
+            - name: ASPNETCORE_ENVIRONMENT
+              valueFrom:
+                configMapKeyRef:
+                  name: flowery-config
+                  key: ASPNETCORE_ENVIRONMENT
+
+            - name: Gateway__IdentityServiceUrl
+              valueFrom:
+                configMapKeyRef:
+                  name: flowery-config
+                  key: Gateway__IdentityServiceUrl
+            - name: Gateway__CatalogServiceUrl
+              valueFrom:
+                configMapKeyRef:
+                  name: flowery-config
+                  key: Gateway__CatalogServiceUrl
+            - name: Gateway__PaymentServiceUrl
+              valueFrom:
+                configMapKeyRef:
+                  name: flowery-config
+                  key: Gateway__PaymentServiceUrl
+            - name: Gateway__AddressCartServiceUrl
+              valueFrom:
+                configMapKeyRef:
+                  name: flowery-config
+                  key: Gateway__AddressCartServiceUrl
+            - name: Gateway__OrdersServiceUrl
+              valueFrom:
+                configMapKeyRef:
+                  name: flowery-config
+                  key: Gateway__OrdersServiceUrl
+            - name: Gateway__AllowedOrigins
+              valueFrom:
+                configMapKeyRef:
+                  name: flowery-config
+                  key: Gateway__AllowedOrigins
+
+            - name: Gateway__RateLimiting__Auth__PermitLimit
+              valueFrom:
+                configMapKeyRef:
+                  name: flowery-config
+                  key: Gateway__RateLimiting__Auth__PermitLimit
+            - name: Gateway__RateLimiting__Auth__WindowSeconds
+              valueFrom:
+                configMapKeyRef:
+                  name: flowery-config
+                  key: Gateway__RateLimiting__Auth__WindowSeconds
+            - name: Gateway__RateLimiting__Default__PermitLimit
+              valueFrom:
+                configMapKeyRef:
+                  name: flowery-config
+                  key: Gateway__RateLimiting__Default__PermitLimit
+            - name: Gateway__RateLimiting__Default__WindowSeconds
+              valueFrom:
+                configMapKeyRef:
+                  name: flowery-config
+                  key: Gateway__RateLimiting__Default__WindowSeconds
+
+            - name: Gateway__HealthCheck__IntervalSeconds
+              valueFrom:
+                configMapKeyRef:
+                  name: flowery-config
+                  key: Gateway__HealthCheck__IntervalSeconds
+            - name: Gateway__HealthCheck__TimeoutSeconds
+              valueFrom:
+                configMapKeyRef:
+                  name: flowery-config
+                  key: Gateway__HealthCheck__TimeoutSeconds
+
+            - name: Jwt__SecretKey
+              valueFrom:
+                secretKeyRef:
+                  name: flowery-secrets
+                  key: Jwt__SecretKey
+            - name: Jwt__Issuer
+              valueFrom:
+                configMapKeyRef:
+                  name: flowery-config
+                  key: Jwt__Issuer
+            - name: Jwt__Audience
+              valueFrom:
+                configMapKeyRef:
+                  name: flowery-config
+                  key: Jwt__Audience

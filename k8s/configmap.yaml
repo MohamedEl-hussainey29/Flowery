@@ -1,0 +1,55 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: flowery-config
+  namespace: flowery
+data:
+  ASPNETCORE_ENVIRONMENT: "Development"
+
+  # Database names and in-cluster SQL Server address
+  SQL_SERVER: "sqlserver-cluster-ip-service"
+  AUTH_DATABASE_NAME: "FloweAppAuthDb"
+  CATALOG_DATABASE_NAME: "FloweAppCatalogDb"
+  ADDRESSCART_DATABASE_NAME: "FloweAppAddressCartDb"
+  ORDERS_DATABASE_NAME: "FloweAppOrdersDb"
+  PAYMENT_DATABASE_NAME: "FloweAppPaymentDb"
+
+  # In-cluster service DNS names
+  Redis__ConnectionString: "redis-cluster-ip-service:6379"
+  RabbitMq__Host: "rabbitmq-cluster-ip-service"
+  CatalogService__BaseUrl: "http://catalog-cluster-ip-service:8080"
+  Gateway__IdentityServiceUrl: "http://identity-cluster-ip-service:8080"
+  Gateway__CatalogServiceUrl: "http://catalog-cluster-ip-service:8080"
+  Gateway__AddressCartServiceUrl: "http://address-cart-cluster-ip-service:8080"
+  Gateway__OrdersServiceUrl: "http://orders-cluster-ip-service:8080"
+  Gateway__PaymentServiceUrl: "http://payment-cluster-ip-service:8080"
+  Gateway__AllowedOrigins: "http://localhost:5173"
+
+  # Rate limiting
+  Gateway__RateLimiting__Auth__PermitLimit: "10"
+  Gateway__RateLimiting__Auth__WindowSeconds: "60"
+  Gateway__RateLimiting__Default__PermitLimit: "100"
+  Gateway__RateLimiting__Default__WindowSeconds: "60"
+
+  # Health check
+  Gateway__HealthCheck__IntervalSeconds: "10"
+  Gateway__HealthCheck__TimeoutSeconds: "5"
+
+  # Local development defaults; set mock mode true to avoid requiring a Maps key
+  Geocoding__BaseUrl: "https://maps.googleapis.com/maps/api/geocode/json"
+  Geocoding__UseMockProvider: "true"
+
+  Stripe__SuccessUrl: "http://localhost:5173/orders"
+  Stripe__CancelUrl: "http://localhost:5173/cart"
+
+  Jwt__Issuer: "FlowersApp.IdentityService"
+  Jwt__Audience: "FlowersApp.Clients"
+  Jwt__AccessTokenExpiryMinutes: "15"
+  Jwt__RefreshTokenExpiryDays: "30"
+
+  Email__SmtpPort: "587"
+  Email__SenderName: "Flowery"
+  Email__EnableSsl: "true"
+
+  # The Identity Service Deployment should mount the Secret key at this path.
+  Firebase__CredentialsPath: "/firebase/firebase-service-account.json"

@@ -1,0 +1,134 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: orders-deployment
+  namespace: flowery
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: orders
+  template:
+    metadata:
+      labels:
+        component: orders
+    spec:
+      containers:
+        - name: orders
+          image: mowalid29/flowery-orders
+          ports:
+            - containerPort: 8080
+          env:
+            - name: ASPNETCORE_ENVIRONMENT
+              valueFrom:
+                configMapKeyRef:
+                  name: flowery-config
+                  key: ASPNETCORE_ENVIRONMENT
+
+            - name: MSSQL_SA_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: flowery-secrets
+                  key: MSSQL_SA_PASSWORD
+            - name: ConnectionStrings__OrdersDatabase
+              value: "Server=sqlserver-cluster-ip-service;Database=FloweAppOrdersDb;User Id=sa;Password=$(MSSQL_SA_PASSWORD);TrustServerCertificate=True"
+
+            - name: Gateway__CatalogServiceUrl
+              valueFrom:
+                configMapKeyRef:
+                  name: flowery-config
+                  key: Gateway__CatalogServiceUrl
+            - name: Gateway__AddressCartServiceUrl
+              valueFrom:
+                configMapKeyRef:
+                  name: flowery-config
+                  key: Gateway__AddressCartServiceUrl
+            - name: Gateway__PaymentServiceUrl
+              valueFrom:
+                configMapKeyRef:
+                  name: flowery-config
+                  key: Gateway__PaymentServiceUrl
+
+            - name: Redis__ConnectionString
+              valueFrom:
+                configMapKeyRef:
+                  name: flowery-config
+                  key: Redis__ConnectionString
+
+            - name: RabbitMq__Host
+              valueFrom:
+                configMapKeyRef:
+                  name: flowery-config
+                  key: RabbitMq__Host
+            - name: RabbitMq__Username
+              valueFrom:
+                secretKeyRef:
+                  name: flowery-secrets
+                  key: RabbitMq__Username
+            - name: RabbitMq__Password
+              valueFrom:
+                secretKeyRef:
+                  name: flowery-secrets
+                  key: RabbitMq__Password
+
+            - name: Jwt__SecretKey
+              valueFrom:
+                secretKeyRef:
+                  name: flowery-secrets
+                  key: Jwt__SecretKey
+            - name: Jwt__Issuer
+              valueFrom:
+                configMapKeyRef:
+                  name: flowery-config
+                  key: Jwt__Issuer
+            - name: Jwt__Audience
+              valueFrom:
+                configMapKeyRef:
+                  name: flowery-config
+                  key: Jwt__Audience
+            - name: Jwt__AccessTokenExpiryMinutes
+              valueFrom:
+                configMapKeyRef:
+                  name: flowery-config
+                  key: Jwt__AccessTokenExpiryMinutes
+            - name: Jwt__RefreshTokenExpiryDays
+              valueFrom:
+                configMapKeyRef:
+                  name: flowery-config
+                  key: Jwt__RefreshTokenExpiryDays
+
+            - name: Email__SmtpHost
+              valueFrom:
+                secretKeyRef:
+                  name: flowery-secrets
+                  key: Email__SmtpHost
+            - name: Email__SmtpPort
+              valueFrom:
+                configMapKeyRef:
+                  name: flowery-config
+                  key: Email__SmtpPort
+            - name: Email__SenderEmail
+              valueFrom:
+                secretKeyRef:
+                  name: flowery-secrets
+                  key: Email__SenderEmail
+            - name: Email__SenderName
+              valueFrom:
+                configMapKeyRef:
+                  name: flowery-config
+                  key: Email__SenderName
+            - name: Email__Username
+              valueFrom:
+                secretKeyRef:
+                  name: flowery-secrets
+                  key: Email__Username
+            - name: Email__Password
+              valueFrom:
+                secretKeyRef:
+                  name: flowery-secrets
+                  key: Email__Password
+            - name: Email__EnableSsl
+              valueFrom:
+                configMapKeyRef:
+                  name: flowery-config
+                  key: Email__EnableSsl

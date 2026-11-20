@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: sqlserver-stateful-set
+  namespace: flowery
+spec:
+  serviceName: sqlserver-headless
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sqlserver
+  template:
+    metadata:
+      labels:
+        app: sqlserver
+    spec:
+      containers:
+        - name: sqlserver
+          image: mcr.microsoft.com/mssql/server:2022-latest
+          ports:
+            - name: sql
+              containerPort: 1433
+          env:
+            - name: ACCEPT_EULA
+              value: "Y"
+            - name: MSSQL_PID
+              value: "Developer"
+            - name: MSSQL_SA_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: flowery-secrets
+                  key: MSSQL_SA_PASSWORD
+          volumeMounts:
+            - name: sqlserver-pvc
+              mountPath: /var/opt/mssql
+          startupProbe:
+            tcpSocket:
+              port: sql
+            periodSeconds: 5
+            failureThreshold: 30
+          readinessProbe:
+            tcpSocket:
+              port: sql
+            periodSeconds: 10
+          resources:
+            requests:
+              cpu: 500m
+              memory: 2Gi
+            limits:
+              memory: 4Gi
+      volumes:
+        - name: sqlserver-pvc
+          persistentVolumeClaim:
+            claimName: sqlserver-pvc

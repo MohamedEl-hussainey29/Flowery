@@ -1,0 +1,2 @@
+# Local Kubernetes Secret manifest can contain plaintext credentials.
+/secret.yaml
