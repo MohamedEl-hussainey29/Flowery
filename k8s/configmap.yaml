@@ -39,8 +39,8 @@ data:
   Geocoding__BaseUrl: "https://maps.googleapis.com/maps/api/geocode/json"
   Geocoding__UseMockProvider: "true"
 
-  Stripe__SuccessUrl: "http://localhost:5173/orders"
-  Stripe__CancelUrl: "http://localhost:5173/cart"
+  Stripe__SuccessUrl: "http://localhost/orders"
+  Stripe__CancelUrl: "http://localhost/cart"
 
   Jwt__Issuer: "FlowersApp.IdentityService"
   Jwt__Audience: "FlowersApp.Clients"
